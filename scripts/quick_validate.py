@@ -24,6 +24,7 @@ REQUIRED_FOLDERS = [
     "templates",
     "examples",
     "scripts",
+    "workspaces",
 ]
 
 REQUIRED_TEMPLATES = [
@@ -35,6 +36,18 @@ REQUIRED_TEMPLATES = [
     "templates/06-presenter-guide.md",
     "templates/07-objection-guide.md",
     "templates/08-follow-up.md",
+]
+
+REQUIRED_SAMPLE_WORKSPACE_FILES = [
+    "workspaces/northstar-support-desk/workspace.md",
+]
+
+REQUIRED_SAMPLE_WORKSPACE_FOLDERS = [
+    "workspaces/northstar-support-desk/inputs",
+    "workspaces/northstar-support-desk/research",
+    "workspaces/northstar-support-desk/evidence",
+    "workspaces/northstar-support-desk/outputs",
+    "workspaces/northstar-support-desk/notes",
 ]
 
 POSITIONING_PHRASES = [
@@ -78,6 +91,12 @@ def main():
     for template in REQUIRED_TEMPLATES:
         checks.append((f"required template: {template}", check_exists(template)))
 
+    for folder in REQUIRED_SAMPLE_WORKSPACE_FOLDERS:
+        checks.append((f"sample workspace folder: {folder}", (ROOT / folder).is_dir()))
+
+    for file_path in REQUIRED_SAMPLE_WORKSPACE_FILES:
+        checks.append((f"sample workspace file: {file_path}", check_exists(file_path)))
+
     if check_exists("README.md"):
         readme = read_text("README.md")
         for phrase in POSITIONING_PHRASES:
@@ -90,7 +109,10 @@ def main():
 
     if check_exists("SKILL.md"):
         skill = read_text("SKILL.md")
-        checks.append(("SKILL starts in Review Mode", "Start in Review Mode by default" in skill))
+        checks.append(("SKILL starts in Context Collection Mode", "Start in Context Collection Mode by default" in skill))
+        checks.append(("SKILL includes Customer Context Inventory", "Customer Context Inventory" in skill))
+        checks.append(("SKILL includes Company Workspace Mode", "Company Workspace Mode" in skill))
+        checks.append(("SKILL defines workspace output filenames", "outputs/01-review-summary.md" in skill))
         checks.append(("SKILL requires review before generation", "reviews before it generates" in skill))
         checks.append(("SKILL includes evidence classification", "Evidence Classification" in skill))
 

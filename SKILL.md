@@ -1,6 +1,6 @@
 ---
 name: demo-walkthrough-builder
-description: An evidence-first reviewer for customer-facing technical demos. Use when reviewing, validating, or preparing demo walkthroughs, presenter scripts, Solutions Engineering demos, customer-facing technical narratives, unsupported claims, commitment boundaries, and final demo materials from discovery notes or customer context.
+description: An evidence-first reviewer for customer-facing technical demos. Use when reviewing, validating, or preparing demo walkthroughs, presenter scripts, Solutions Engineering demos, customer-facing technical narratives, unsupported claims, commitment boundaries, and final demo materials from company names, company websites, attached materials, discovery notes, or customer context.
 ---
 
 # Demo Walkthrough Builder
@@ -24,11 +24,145 @@ Use this Skill when the user asks to:
 - create a customer-facing technical walkthrough
 - build a presenter guide
 - prepare a demo from discovery notes
+- prepare a demo from a company name
+- prepare a demo from a company website
+- prepare a demo from attached company materials
 - turn customer context into a safe demo strategy
 
 ## Operating Mode
 
-Start in Review Mode by default.
+Start in Context Collection Mode by default, then proceed into Review Mode.
+
+Context Collection Mode must identify the input type:
+
+- company name
+- website URL
+- files
+- notes
+- mixed input
+
+If the user provides only a company website, inspect the site or ask the active assistant environment to browse or fetch available public pages if browsing is available.
+
+For company website mode, look for:
+
+- company description
+- products or services
+- target customers
+- industries served
+- public messaging
+- visible business priorities
+- possible customer-facing workflows
+- public contact/support flows
+- relevant pages for demo context
+- public claims that can be used as evidence
+
+If the user provides only a company name, search or ask the active assistant environment to search for public information about the company if web search is available.
+
+For company name mode, collect:
+
+- official website
+- company summary
+- products or services
+- industries served
+- public business context
+- available public materials
+
+If search or browsing is not available, ask the user to provide a website, document, notes, or screenshots.
+
+If the user provides files, screenshots, PDFs, Markdown notes, transcripts, README files, or other company-related material, inspect those materials first and treat them as higher-confidence evidence than public search results.
+
+Use this evidence priority:
+
+1. User-provided files and notes
+2. Official company website
+3. Official public documentation
+4. Public third-party information
+5. Inferences
+
+Context Collection Mode must produce a Customer Context Inventory before Review Mode. The inventory should classify gathered information by source and evidence type, identify what is known, inferred, missing, or needs validation, and never invent private customer information.
+
+## Company Workspace Mode
+
+When the user runs the Skill for a company name, company website, attached company materials, or mixed company input, organize collected context, notes, evidence, and generated outputs inside a dedicated company workspace.
+
+The Skill should:
+
+1. Identify the company or website.
+2. Create or reuse the appropriate company workspace.
+3. Store raw inputs in `inputs/`.
+4. Store public research summaries in `research/`.
+5. Store evidence and validation analysis in `evidence/`.
+6. Store generated deliverables in `outputs/`.
+7. Store working assumptions and open questions in `notes/`.
+8. Update `workspace.md` after each run.
+
+Keep Company Workspace Mode file-system based and GitHub-friendly. Do not add a backend. Do not add a database. Do not add external dependencies. The workspace structure should work locally with Codex.
+
+Create or reuse a top-level `workspaces/` folder. For each company, create or reuse a slug-based subfolder using the company name or domain.
+
+Examples:
+
+```text
+workspaces/
+└── grupomarlan-com-br/
+    ├── inputs/
+    ├── research/
+    ├── evidence/
+    ├── outputs/
+    └── notes/
+```
+
+```text
+workspaces/
+└── acme-corp/
+    ├── inputs/
+    ├── research/
+    ├── evidence/
+    ├── outputs/
+    └── notes/
+```
+
+Folder purposes:
+
+- `inputs/`: Store user-provided materials, copied notes, uploaded file summaries, screenshot descriptions, discovery notes, raw prompts, or source references.
+- `research/`: Store public context gathered from official websites, public pages, search summaries, company descriptions, product or service summaries, and other public information.
+- `evidence/`: Store evidence inventories, source lists, claim mappings, unsupported claims, unknowns, and validation requirements.
+- `outputs/`: Store final generated deliverables such as the review summary, recommendation, demo walkthrough, presenter guide, objection guide, and follow-up notes.
+- `notes/`: Store working notes, assumptions, open questions, next research steps, and context that may be useful in future runs.
+
+Each company folder must include `workspace.md`.
+
+`workspace.md` should summarize:
+
+- company name
+- website
+- date created
+- input sources used
+- public sources reviewed
+- files or materials provided by the user
+- current recommendation
+- known unknowns
+- validation tasks
+- latest generated outputs
+
+Workspace rules:
+
+- Never mix materials from different companies.
+- Always create or reuse the correct company workspace before generating outputs.
+- If the company workspace already exists, update it instead of creating a duplicate.
+- If the company name is ambiguous, ask the user to confirm before creating the workspace.
+- If only a URL is provided, derive the slug from the domain.
+- If only a company name is provided, derive the slug from the normalized company name.
+- Use lowercase slugs.
+- Replace spaces with hyphens.
+- Remove special characters.
+- For domains, remove protocol and slashes.
+
+Slug examples:
+
+- `https://www.grupomarlan.com.br/` -> `grupomarlan-com-br`
+- `Grupo Marlan` -> `grupo-marlan`
+- `Acme Corp` -> `acme-corp`
 
 Review Mode must produce:
 
@@ -52,16 +186,21 @@ Use only these recommendation statuses:
 
 Follow this sequence:
 
-1. Understand the customer context.
-2. Inventory the available evidence.
-3. Identify unknowns.
-4. Detect unsupported claims.
-5. Detect risky commitments.
-6. Define commitment boundaries.
-7. Assess the narrative.
-8. Provide a recommendation: Proceed, Proceed with Validation, or Do Not Proceed.
-9. Ask whether the user wants to generate final customer-facing materials.
-10. Only then generate the final walkthrough, presenter guide, objection guide, and follow-up materials.
+1. Identify whether the input is a company name, website URL, files, notes, or mixed input.
+2. Determine the company workspace slug or ask for confirmation if the company is ambiguous.
+3. Create or reuse the correct company workspace before saving collected context or generated outputs.
+4. Collect available public and company context from the strongest available sources.
+5. Create a Customer Context Inventory with source and evidence classifications.
+6. Understand the customer context.
+7. Inventory the available evidence.
+8. Identify unknowns.
+9. Detect unsupported claims.
+10. Detect risky commitments.
+11. Define commitment boundaries.
+12. Assess the narrative.
+13. Provide a recommendation: Proceed, Proceed with Validation, or Do Not Proceed.
+14. Ask whether the user wants to generate final customer-facing materials.
+15. Only then generate the final walkthrough, presenter guide, objection guide, and follow-up materials.
 
 Do not skip review because the user asks for a polished final script. If they ask directly for generation, first provide the review and recommendation, then ask whether to proceed with final materials.
 
@@ -150,6 +289,17 @@ Generate Markdown outputs using the templates in the `templates/` folder:
 - `templates/06-presenter-guide.md`
 - `templates/07-objection-guide.md`
 - `templates/08-follow-up.md`
+
+When writing outputs to a company workspace, use these numbered filenames in the workspace `outputs/` folder:
+
+- `outputs/01-review-summary.md`
+- `outputs/02-unsupported-claims.md`
+- `outputs/03-commitment-boundaries.md`
+- `outputs/04-recommendation.md`
+- `outputs/05-demo-walkthrough.md`
+- `outputs/06-presenter-guide.md`
+- `outputs/07-objection-guide.md`
+- `outputs/08-follow-up.md`
 
 Use the templates as structure, not as a reason to fill gaps with invented facts. Mark missing information as Unknown or Needs Validation.
 

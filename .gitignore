@@ -31,7 +31,11 @@ Thumbs.db
 *.swp
 *.swo
 
-# Local outputs
-outputs/
+# Local root outputs
+/outputs/
 tmp/
 *.local
+
+# Company workspaces are intentionally not ignored by default.
+# You may commit fictional sample workspaces, but do not commit private customer data.
+# Add local ignore rules for private workspaces before storing sensitive materials.
