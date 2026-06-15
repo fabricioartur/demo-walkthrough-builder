@@ -1,0 +1,4 @@
+name: demo-walkthrough-builder
+display_name: Demo Walkthrough Builder
+description: Evidence-first reviewer for customer-facing technical demos.
+version: 1.0.0
