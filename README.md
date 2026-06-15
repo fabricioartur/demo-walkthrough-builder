@@ -109,6 +109,42 @@ Use Demo Walkthrough Builder using this attached PDF and the company website.
 
 If search or browsing is not available, provide a website, document, notes, or screenshots so the Skill can build a Customer Context Inventory before reviewing demo readiness.
 
+## Presenter + Vendor + Customer Mode
+
+Demo Walkthrough Builder can also start from a prompt where the presenter explains who they are, which company they represent, and which customer they are preparing a demo for.
+
+The Skill separates four contexts:
+
+- Presenter Context: the person preparing or presenting the demo, including role, responsibilities, and constraints.
+- Vendor / Seller Context: the company or product provider represented by the presenter.
+- Customer / Target Account Context: the company receiving the demo.
+- Demo Context: meeting type, audience, product being demonstrated, business goal, technical goal, and desired outcome.
+
+Example prompts:
+
+```text
+Use Demo Walkthrough Builder:
+I work for OpenAI as a Senior Solutions Engineer and I will demo to Coca-Cola.
+
+Use Demo Walkthrough Builder:
+Sou Solutions Engineer na ExampleCo e vou apresentar para a Northstar Support Desk.
+
+Use Demo Walkthrough Builder:
+We are Acme Analytics and the customer is Contoso Retail.
+```
+
+For the first example, the Skill should not treat OpenAI and Coca-Cola as the same entity. It should parse the prompt as:
+
+- Presenter company: OpenAI
+- Presenter role: Senior Solutions Engineer
+- Target customer: Coca-Cola
+- Activity: customer-facing demo preparation
+- Meeting type: online demo, unless otherwise specified
+
+These examples are usage examples only and do not imply project affiliation with any named company.
+
+The Skill must not invent what product is being demonstrated. If the vendor is OpenAI, it should not assume the demo is ChatGPT, API, Codex, Agents, Enterprise, voice, fine-tuning, or any specific product unless the user says so. Instead, it should ask which product or capability will be demonstrated, who the audience is, what business problem the demo should focus on, what meeting type this is, and whether discovery notes, files, transcripts, screenshots, or requirements are available.
+
 ## Company Workspaces
 
 Demo Walkthrough Builder can organize each company engagement into a separate workspace so context, evidence, review outputs, and final deliverables stay separated. This prevents materials from different companies or demos from being mixed together.

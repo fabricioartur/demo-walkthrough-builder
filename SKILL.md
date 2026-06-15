@@ -1,6 +1,6 @@
 ---
 name: demo-walkthrough-builder
-description: An evidence-first reviewer for customer-facing technical demos. Use when reviewing, validating, or preparing demo walkthroughs, presenter scripts, Solutions Engineering demos, customer-facing technical narratives, unsupported claims, commitment boundaries, and final demo materials from company names, company websites, attached materials, discovery notes, or customer context.
+description: An evidence-first reviewer for customer-facing technical demos. Use when reviewing, validating, or preparing demo walkthroughs, presenter scripts, Solutions Engineering demos, customer-facing technical narratives, unsupported claims, commitment boundaries, and final demo materials from company names, company websites, presenter/vendor/customer context, attached materials, discovery notes, or customer context.
 ---
 
 # Demo Walkthrough Builder
@@ -27,6 +27,8 @@ Use this Skill when the user asks to:
 - prepare a demo from a company name
 - prepare a demo from a company website
 - prepare a demo from attached company materials
+- prepare a demo where the user states their role, vendor company, and target customer
+- separate presenter context, vendor context, customer context, and demo context
 - turn customer context into a safe demo strategy
 
 ## Operating Mode
@@ -37,6 +39,7 @@ Context Collection Mode must identify the input type:
 
 - company name
 - website URL
+- presenter, vendor, and customer statement
 - files
 - notes
 - mixed input
@@ -80,6 +83,55 @@ Use this evidence priority:
 5. Inferences
 
 Context Collection Mode must produce a Customer Context Inventory before Review Mode. The inventory should classify gathered information by source and evidence type, identify what is known, inferred, missing, or needs validation, and never invent private customer information.
+
+## Presenter + Vendor + Customer Mode
+
+Use this mode when the user describes who they are, which company they represent, their role, and which customer or target account they are preparing a demo for.
+
+Trigger examples:
+
+- "I work for [vendor] as [role] and I will demo to [customer]."
+- "Sou [cargo] na [empresa] e vou apresentar para [cliente]."
+- "I'm a Solutions Engineer at [vendor] preparing a demo for [customer]."
+- "We are [vendor] and the customer is [customer]."
+
+Parse the prompt into four separate contexts:
+
+1. Presenter Context: who is presenting, role, responsibilities, constraints, and any personal operating context relevant to the demo.
+2. Vendor / Seller Context: the company, product provider, or solution provider represented by the presenter.
+3. Customer / Target Account Context: the company receiving the demo.
+4. Demo Context: meeting type, audience, product being demonstrated, business goal, technical goal, and desired outcome.
+
+Do not treat the presenter company and target customer as the same entity. For example, if the user says "Trabalho para OpenAI como Senior Solutions Engineer e vou fazer uma demo para a empresa Coca-Cola," parse it as:
+
+- Presenter company: OpenAI
+- Presenter role: Senior Solutions Engineer
+- Target customer: Coca-Cola
+- Activity: customer-facing demo preparation
+- Meeting type: online demo, unless otherwise specified
+
+The Skill should:
+
+1. Extract the presenter role.
+2. Extract the vendor or presenter company.
+3. Extract the target customer.
+4. Create or reuse a workspace for the target customer.
+5. Store the original prompt in `inputs/`.
+6. Research or request public context for the target customer if available.
+7. Optionally collect public context about the vendor only when needed to understand what is being demonstrated.
+8. Ask for missing demo-critical information before generating final customer-facing materials.
+
+If the user provides only presenter company, role, and target customer, enter Context Collection Mode and identify what is missing before generating final materials.
+
+Do not invent what product is being demonstrated. If the vendor is OpenAI, do not assume the demo is ChatGPT, API, Codex, Agents, Enterprise, voice, fine-tuning, or any specific product unless the user says so.
+
+When the demonstrated product or capability is missing, ask:
+
+- Which product or capability will be demonstrated?
+- Who is the audience at the customer?
+- What business problem should the demo focus on?
+- Is this discovery, first demo, technical validation, executive alignment, or POC planning?
+- Are there any discovery notes, emails, files, call transcripts, screenshots, or requirements?
 
 ## Company Workspace Mode
 
@@ -186,21 +238,23 @@ Use only these recommendation statuses:
 
 Follow this sequence:
 
-1. Identify whether the input is a company name, website URL, files, notes, or mixed input.
-2. Determine the company workspace slug or ask for confirmation if the company is ambiguous.
-3. Create or reuse the correct company workspace before saving collected context or generated outputs.
-4. Collect available public and company context from the strongest available sources.
-5. Create a Customer Context Inventory with source and evidence classifications.
-6. Understand the customer context.
-7. Inventory the available evidence.
-8. Identify unknowns.
-9. Detect unsupported claims.
-10. Detect risky commitments.
-11. Define commitment boundaries.
-12. Assess the narrative.
-13. Provide a recommendation: Proceed, Proceed with Validation, or Do Not Proceed.
-14. Ask whether the user wants to generate final customer-facing materials.
-15. Only then generate the final walkthrough, presenter guide, objection guide, and follow-up materials.
+1. Identify whether the input is a company name, website URL, presenter/vendor/customer statement, files, notes, or mixed input.
+2. If presenter/vendor/customer context is present, separate Presenter Context, Vendor / Seller Context, Customer / Target Account Context, and Demo Context.
+3. Determine the target customer workspace slug or ask for confirmation if the customer is ambiguous.
+4. Create or reuse the correct target customer workspace before saving collected context or generated outputs.
+5. Store the original prompt and user-provided materials in `inputs/`.
+6. Collect available public and company context from the strongest available sources.
+7. Create a Customer Context Inventory with source and evidence classifications.
+8. Understand the customer context.
+9. Inventory the available evidence.
+10. Identify unknowns.
+11. Detect unsupported claims.
+12. Detect risky commitments.
+13. Define commitment boundaries.
+14. Assess the narrative.
+15. Provide a recommendation: Proceed, Proceed with Validation, or Do Not Proceed.
+16. Ask whether the user wants to generate final customer-facing materials.
+17. Only then generate the final walkthrough, presenter guide, objection guide, and follow-up materials.
 
 Do not skip review because the user asks for a polished final script. If they ask directly for generation, first provide the review and recommendation, then ask whether to proceed with final materials.
 
