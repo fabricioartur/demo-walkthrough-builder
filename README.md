@@ -58,22 +58,112 @@ See [CONSTITUTION.md](CONSTITUTION.md) for the full constitution.
 ## Workflow
 
 ```text
-Customer Context
-↓
-Evidence Inventory
-↓
-Unknown Detection
-↓
-Risk Review
-↓
-Commitment Boundaries
-↓
-Recommendation
-↓
-Optional Final Deliverables
++--------------------------+
+| 1. Customer Context      |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 2. Evidence Inventory    |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 3. Unknown Detection     |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 4. Risk Review           |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 5. Commitment Boundaries |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 6. Recommendation        |
++------------+-------------+
+             |
+             v
++--------------------------+
+| 7. Optional Deliverables |
++--------------------------+
 ```
 
 The Skill always starts in review mode. Customer-facing material should be generated only after the review has identified evidence, unknowns, unsupported claims, risks, and commitment boundaries.
+
+## Review Gate
+
+```text
+                    +----------------------+
+                    | Discovery Notes      |
+                    | Demo Draft           |
+                    | Product Context      |
+                    +----------+-----------+
+                               |
+                               v
+                    +----------------------+
+                    | Review Mode          |
+                    | - evidence check     |
+                    | - unknown detection  |
+                    | - claim review       |
+                    | - risk review        |
+                    +----------+-----------+
+                               |
+                               v
+              +----------------+----------------+
+              |                                 |
+              v                                 v
++--------------------------+        +--------------------------+
+| Safe / Supported Claims  |        | Unsupported / Risky      |
+| can shape the demo       |        | Claims need validation   |
++------------+-------------+        +------------+-------------+
+             |                                   |
+             +----------------+------------------+
+                              |
+                              v
+                    +----------------------+
+                    | Recommendation       |
+                    | Proceed              |
+                    | Proceed w/ Validation|
+                    | Do Not Proceed       |
+                    +----------+-----------+
+                               |
+                               v
+                    +----------------------+
+                    | Generate final       |
+                    | materials only after |
+                    | the review gate      |
+                    +----------------------+
+```
+
+## Evidence Review Model
+
+```text
++----------------------+----------------------+----------------------+
+| Claim Type           | Evidence Question    | Presenter Treatment  |
++----------------------+----------------------+----------------------+
+| Verified             | Is it directly       | Safe to say with     |
+|                      | supported?           | clear wording        |
++----------------------+----------------------+----------------------+
+| Visible              | Is it shown in UI,   | Safe to show; avoid  |
+|                      | screenshot, diagram? | wider claims         |
++----------------------+----------------------+----------------------+
+| Inferred             | Is it reasonable but | Label as hypothesis  |
+|                      | not proven?          | or ask a question    |
++----------------------+----------------------+----------------------+
+| Placeholder          | Is it temporary?     | Replace before demo  |
++----------------------+----------------------+----------------------+
+| Unknown              | Is information       | Do not present as    |
+|                      | missing?             | fact                 |
++----------------------+----------------------+----------------------+
+| Needs Validation     | Could it create a    | Validate before      |
+|                      | commitment?          | presenting as fact   |
++----------------------+----------------------+----------------------+
+```
 
 ## Recommendation Statuses
 
